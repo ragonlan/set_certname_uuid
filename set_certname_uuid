@@ -1,0 +1,17 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          set_certname_uuid
+# Required-Start:    puppet
+# Default-Start:     2 3 4 5
+# Short-Description: set uuid as certname in puppet agent
+### END INIT INFO
+
+UUID=`facter uuid 2> /dev/null`
+if [ -z $UUID ]; then
+  exit 0
+fi
+UUID=`echo $UUID | tr '[:upper:]' '[:lower:]'`
+conf=/etc/puppet/puppet.conf
+if [ -f $conf ]; then
+  crudini --set "$conf" main certname "$UUID" 2>/dev/null
+fi
